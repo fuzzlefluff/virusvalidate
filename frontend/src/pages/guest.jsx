@@ -1,0 +1,93 @@
+import React from 'react'
+import { useState } from 'react'
+import { useEffect} from 'react'
+import axios from 'axios'
+import appLogo from '../assets/virusLogo.svg'
+
+
+
+
+
+function App() {
+	const [appointmentData, setAppointmentData] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+	const [conditionData, setConditionData] = useState([]);
+	const [visitorData, setVisitorData] = useState([]);
+	
+
+	async function fetchData() {
+		const url = window.location.pathname;
+		
+		const appointmentId = url.split('/')[2];
+		const visitorId = url.split('/')[3];
+		
+		try{
+		//get appointment data
+		const responseAppointments = await axios.get('http://localhost:3000/api/appointment/'+appointmentId);
+		setAppointmentData(responseAppointments.data.data);
+		
+		//get visitor data
+		const responseVisitors = await axios.get('http://localhost:3000/api/visitor/'+visitorId);
+		setVisitorData(responseVisitors.data.data);
+		
+		const conditionsArray = [];
+		for (let i = 0; i < responseAppointments.data.data.conditions.length; i++) {
+			var conditionresponse = await axios.get('http://localhost:3000/api/condition/'+responseAppointments.data.data.conditions[i]);
+			conditionsArray.push(conditionresponse.data.data);
+		}
+    setConditionData(conditionsArray);
+		
+		} catch (err) {
+			setError(err.message);
+			setAppointmentData([]);
+			setVisitorData([]);
+			setConditionData([]);
+		}
+  
+		setLoading(false); // Set loading to false after fetching data
+	}
+	
+	useEffect(() => {
+		fetchData();
+	}, []);
+  
+  return (
+    <div className="page">
+		<h1>Guest Page</h1>
+		<h3>{visitorData.name} </h3>
+		<br/>
+		<div className="apiinfo">
+        {loading && <div>Getting data from backend...</div>}
+        {error && (
+          <div id="error">
+            There is a problem getting data from the API: - {error}
+          </div>
+        )}
+      </div>
+		<div id="visitortable">
+			<table>
+				<thead>
+				<tr>
+					<th>Name</th>
+					<th>Select Documentation</th>
+					<th>Upload</th>
+				</tr>
+				</thead>
+				<tbody>
+					{conditionData.map((condition)=>
+					<tr key={condition._id}>
+						<td>{condition.name}</td>
+						<td><input type="file"/></td>
+						<td>
+						<button type="submit"><a href={`/appointment`}>Submit</a></button>
+						</td>
+					</tr> )}
+				</tbody>
+			</table>
+		</div>
+    </div>
+  )
+}
+
+export default App

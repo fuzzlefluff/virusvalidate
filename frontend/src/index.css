@@ -1,0 +1,214 @@
+body{
+	margin: 0;
+	background-color: orange;
+	color: white;
+	
+}
+.App{
+	height: 100vh;
+    width: 100vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+    
+}
+
+h2{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+h3{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	color: black;
+	background-color: white;
+	border: 15px solid white;
+	max-width: 300px;
+	padding: 10px;
+	margin: 0 auto;
+}
+a{
+	color: white;
+	text-decoration: none;
+}
+
+.vvcontainer{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.vvcontainer input[type=text], 
+.vvcontainer textarea {
+    padding: 10px;
+    font-size: 1em;
+}
+
+.vvcontainer input[type=email], 
+.vvcontainer textarea {
+    padding: 10px;
+    font-size: 1em;
+}
+.apiinfo{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	color: red;
+}
+.buttoncontainer {
+	max-width: 20em auto;
+}
+ button {
+    display: block;
+    margin: 7px auto;
+	max-width: 20em auto;
+    padding: 10px;
+    background-color: #124b16;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  }
+  
+  button[type=link] {
+	 background-color: purple;
+  }
+  
+  button[type=delete] {
+	 background-color: red;
+	 padding: 3px;
+  }
+  
+  button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+  
+  table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+	color: black;
+  }
+  
+  thead {
+    background-color: #F57C00;
+    color: #FFFFFF;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #DDDDDD;
+  }
+  
+
+  tr:nth-child(even) {
+    background-color: #EFEFEF;
+  }
+  
+  tr:hover {
+    background-color: #FFCC80;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+ 
+  
+ .react-calendar button {
+	color: black;
+ }
+ 
+ .react-datetime-picker, .react-datetime-picker *, .react-datetime-picker ::before, .react-datetime-picker ::after
+ {
+	 background-color: white;
+ }
+ 
+ .visitorroot{
+	background-color: orange;
+	}
+	
+ .visitorform {
+	background-color: white;
+	padding: 20px;
+	margin: 20px auto;
+	max-width: 500px;
+	border-radius: 5px;
+	}
+	
+ .visitorinput[type="submit"] {
+	background-color: green;
+	color: white;
+	padding: 10px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	}
+ .visitorheader{
+	 color: white;
+ }
+ .logincontainer {
+    width: 400px;
+    max-width: 600px;
+	max-height: 600px;
+    margin:2rem;
+    padding: 2rem;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    border-radius: var(--border-radius);
+    background: #ffffff;
+    text-align: center;
+	color: black;	
+}
+
+.logincontainer a{
+	color: blue !important;
+}
+.logincontainer a:visited{
+	color: purple !important;
+}
+
+
+.loginform__input{
+  height: 30px;
+  width: 300px;
+  margin: 4px;
+  padding: 0;
+  
+}
+.loginform_heading{
+  margin-bottom: 50px;
+}
+
+.loginform__button{
+  background-color: purple;
+  margin-top: 20px;
+  height: 40px;
+  width: 200px;
+  color: #ffffff;
+  text-align: center;
+  border: 4px double #cccccc;
+  border-radius: 10px;
+  font-size: 20px
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
+}
+
+.form__link{
+  font-size: 20px;
+  color: black;
+}
+.text{
+  margin-top: 2px;
+}
