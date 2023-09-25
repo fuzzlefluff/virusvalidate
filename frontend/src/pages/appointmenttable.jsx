@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import appLogo from '../assets/virusLogo.svg';
 import initData from '../initdata/locations.json';
+import config from '../config.json'
+
+{/*This creates a page to manage and delete appointments in the database*/}
 
 const App = () => {
   const [appointmentData, setappointmentData] = useState([]);
@@ -13,7 +16,7 @@ const App = () => {
   async function fetchData() {
   try {
     // Get appointments data
-    const responseAppointments = await axios.get('http://localhost:3000/api/appointments');
+    const responseAppointments = await axios.get(config.API_URL + '/appointments');
     setappointmentData(responseAppointments.data.data);
     setError(null);
   } catch (err) {
@@ -23,7 +26,7 @@ const App = () => {
 
   try {
     // Get locations data
-    const responseLocations = await axios.get('http://localhost:3000/api/locations');
+    const responseLocations = await axios.get(config.API_URL + '/locations');
     setLocationData(responseLocations.data.data);
     setError(null);
   } catch (err) {
@@ -41,7 +44,7 @@ const App = () => {
   async function deleteEntry(id){
     var r= confirm("Are you sure you want to delete the appointment?");
     if(r === true){
-      const response = await axios.delete('http://localhost:3000/api/appointment/'+id);
+      const response = await axios.delete(config.API_URL + '/appointment/'+id);
       window.location.reload(false);
     }
   }

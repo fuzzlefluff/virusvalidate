@@ -2,6 +2,9 @@
 import React from 'react'
 import { useState } from 'react'
 import axios from 'axios'
+import config from '../config.json'
+
+{/*This creates a page to allow employees to login*/}
 
 function App() {
 	
@@ -17,7 +20,7 @@ function App() {
 	  const account = {username,email,password}
 	  let response;
 	  try{
-	  response = await axios.post('http://localhost:3000/api/login',account);
+	  response = await axios.post(config.API_URL + '/login',account);
 	  }
 	  catch(err) {
 		 setError(err.message);

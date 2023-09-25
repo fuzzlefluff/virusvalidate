@@ -1,9 +1,11 @@
-{/*<!-- Matou Sow -->*/}
 import React from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import appLogo from '../assets/virusLogo.svg';
 import initData from '../initdata/visitors.json';
+import config from '../config.json'
+
+{/*This creates a page to input and manage Visitor information*/}
 
 const App = () => {
   const [data, setData] = useState(initData);
@@ -24,13 +26,13 @@ const App = () => {
   }
 
   useEffect(() => {
-    fetchData('http://localhost:3000/api/visitors');
+    fetchData(config.API_URL + '/visitors');
   }, []);
 
  async function deleteEntry(id){
 	  var r= confirm("are you sure you want to delete the visitor?")
 	  if(r == true){
-		const response = await axios.delete('http://localhost:3000/api/visitor/'+id)
+		const response = await axios.delete(config.API_URL + '/visitor/'+id)
 		window.location.reload(false)
 	  }
   }
@@ -38,7 +40,7 @@ const App = () => {
   async function handleSubmit(event){
 	  event.preventDefault()
 	  const visitor = {name:event.target.name.value,email:event.target.email.value}
-	  const response = await axios.post('http://localhost:3000/api/visitor',visitor);
+	  const response = await axios.post(config.API_URL + '/visitor',visitor);
 	  window.location.reload(false)
   }
   

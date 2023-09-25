@@ -3,10 +3,9 @@ import { useState } from 'react'
 import { useEffect} from 'react'
 import axios from 'axios'
 import appLogo from '../assets/virusLogo.svg'
+import config from '../config.json'
 
-
-
-
+{/*This creates a page to allow guests to upload information about conditions for appointments they are invited too*/}
 
 function App() {
 	const [appointmentData, setAppointmentData] = useState([]);
@@ -24,16 +23,16 @@ function App() {
 		
 		try{
 		//get appointment data
-		const responseAppointments = await axios.get('http://localhost:3000/api/appointment/'+appointmentId);
+		const responseAppointments = await axios.get(config.API_URL + '/appointment/'+appointmentId);
 		setAppointmentData(responseAppointments.data.data);
 		
 		//get visitor data
-		const responseVisitors = await axios.get('http://localhost:3000/api/visitor/'+visitorId);
+		const responseVisitors = await axios.get(config.API_URL + '/visitor/'+visitorId);
 		setVisitorData(responseVisitors.data.data);
 		
 		const conditionsArray = [];
 		for (let i = 0; i < responseAppointments.data.data.conditions.length; i++) {
-			var conditionresponse = await axios.get('http://localhost:3000/api/condition/'+responseAppointments.data.data.conditions[i]);
+			var conditionresponse = await axios.get(config.API_URL + '/condition/'+ responseAppointments.data.data.conditions[i]);
 			conditionsArray.push(conditionresponse.data.data);
 		}
     setConditionData(conditionsArray);

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import appLogo from '../assets/virusLogo.svg';
 import initData from '../initdata/conditions.json';
+import config from '../config.json'
 
 const App = () => {
   const [data, setData] = useState(initData);
@@ -24,14 +25,14 @@ const App = () => {
   }
 
   useEffect(() => {
-    fetchData('http://localhost:3000/api/conditions');
+    fetchData(config.API_URL + '/conditions');
   }, []);
 
 
   async function deleteEntry(id){
 	  var r= confirm("are you sure you want to delete the condition?")
 	  if(r == true){
-		const response = await axios.delete('http://localhost:3000/api/condition/'+id)
+		const response = await axios.delete(config.API_URL + '/condition/'+id)
 		window.location.reload(false)
 	  }
   }
@@ -42,7 +43,7 @@ const App = () => {
 		  name:event.target.name.value,
 		  description:event.target.description.value
 		}
-	  const response = await axios.post('http://localhost:3000/api/condition',condition);
+	  const response = await axios.post(config.API_URL + '/condition',condition);
 	  window.location.reload(false)
   }
   

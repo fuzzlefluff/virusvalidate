@@ -4,6 +4,9 @@ import axios from 'axios'
 import appLogo from '../assets/virusLogo.svg'
 import initCondition from '../initdata/conditions.json'
 import initVisitor from '../initdata/visitors.json'
+import config from '../config.json'
+
+{/*This creates a page to check visitors before being admitted to an appointment*/}
 
 function App() {
   const [appointmentData, setAppointmentData] = useState([]);
@@ -20,22 +23,22 @@ async function fetchData() {
 
   try {
     // Get appointments data
-    const responseAppointments = await axios.get('http://localhost:3000/api/appointment/'+appointmentId);
+    const responseAppointments = await axios.get(config.API_URL + '/appointment/'+appointmentId);
     setAppointmentData(responseAppointments.data.data);
 
-    const locationresponse = await axios.get('http://localhost:3000/api/location/'+ responseAppointments.data.data.location[0]);
+    const locationresponse = await axios.get(config.API_URL + '/location/'+ responseAppointments.data.data.location[0]);
     setLocationData(locationresponse.data.data);
 
     const visitorsArray = [];
     for (let i = 0; i < responseAppointments.data.data.visitors.length; i++) {
-      var visitorresponse = await axios.get('http://localhost:3000/api/visitor/'+responseAppointments.data.data.visitors[i]);
+      var visitorresponse = await axios.get(config.API_URL + '/visitor/'+responseAppointments.data.data.visitors[i]);
 	  visitorsArray.push(visitorresponse.data.data);
     }
     setVisitorData(visitorsArray);
 	
 	const conditionsArray = [];
     for (let i = 0; i < responseAppointments.data.data.conditions.length; i++) {
-      var conditionresponse = await axios.get('http://localhost:3000/api/condition/'+responseAppointments.data.data.conditions[i]);
+      var conditionresponse = await axios.get(config.API_URL + '/condition/'+responseAppointments.data.data.conditions[i]);
 	  conditionsArray.push(conditionresponse.data.data);
     }
     setConditionData(conditionsArray);

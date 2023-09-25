@@ -7,6 +7,9 @@ import appLogo from '../assets/virusLogo.svg'
 import initLocData from '../initdata/locations.json'
 import initVisData from '../initdata/visitors.json'
 import initCondData from '../initdata/conditions.json'
+import config from '../config.json'
+
+{/*This creates a page to input and create appointments*/}
 
 function App() {
 	const [locationData, setlocationData] = useState(initLocData);
@@ -22,7 +25,7 @@ function App() {
 	
 	async function fetchData() {
     try {
-      const response = await axios.get('http://localhost:3000/api/locations');
+      const response = await axios.get(config.API_URL + '/locations');
       setlocationData(response.data.data);
       setError(null);
     } catch (err) {
@@ -32,7 +35,7 @@ function App() {
       setLoading(false);
     }
 	try {
-      const response = await axios.get('http://localhost:3000/api/conditions');
+      const response = await axios.get(config.API_URL + '/conditions');
       setconditionData(response.data.data);
       setError(null);
     } catch (err) {
@@ -42,7 +45,7 @@ function App() {
       setLoading(false);
     }
 	try {
-      const response = await axios.get('http://localhost:3000/api/visitors');
+      const response = await axios.get(config.API_URL + '/visitors');
       setvisitorData(response.data.data);
       setError(null);
     } catch (err) {
@@ -62,7 +65,7 @@ function App() {
 		conditions: selectedConditions,
 		visitors: selectedVisitors
 	}
-	const response = await axios.post('http://localhost:3000/api/appointment', appointment);
+	const response = await axios.post(config.API_URL + '/appointment', appointment);
 	window.location.href = "/appointments";
   }
 

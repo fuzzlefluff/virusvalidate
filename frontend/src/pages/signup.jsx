@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios'
+import config from '../config.json'
+
+{/*This creates a page to input and manage appointment information*/}
 
 function App() {
   const [formData, setFormData] = useState({
@@ -33,7 +36,7 @@ function App() {
 	const account = {username,email,password}
 	let response;
 	  try{
-	  response = await axios.post('http://localhost:3000/api/account',account);
+	  response = await axios.post(config.API_URL + 'account',account);
 	  }
 	  catch(err) {
 		 setError(err.message);

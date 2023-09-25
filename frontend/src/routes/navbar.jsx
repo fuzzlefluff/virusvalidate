@@ -4,6 +4,8 @@ import { NavLink } from 'react-router-dom'
 import appLogo from './../assets/virusLogo.svg'
 import './navbar.css'
 
+{/*This creates the navbar at the top of the page*/}
+
 const Navbar = () => {
   const [showNavbar, setShowNavbar] = useState(false)
   const [username, setUsername] = useState('')
@@ -22,8 +24,7 @@ const Navbar = () => {
   return (
   <nav className="navbar">
 	<div className="container">
-		//page will not work unless you supply a valid appointment and visitor id from your mongo db!
-		<div><a href={`/guest/#appointmentID#/#visitorID#`}><img src={appLogo} className="logo" alt="VV Logo"/> </a></div>
+		<div><a href={`/appointment`}><img src={appLogo} className="logo" alt="VV Logo"/> </a></div>
 		<div className={`nav-elements  ${showNavbar && 'active'}`}>
 			<ul>
 				<li> <a href={`/appointment`}>Create Appointment</a> </li>

@@ -18,6 +18,7 @@ import GuestPage from "./pages/guest"
 import AppointmentViewPage from "./pages/appointmenttable"
 import LogoutPage from "./pages/logout"
 
+{/*This creates the internal routing needed to switch between pages in our frontend*/}
 
 const router = createBrowserRouter([
   {

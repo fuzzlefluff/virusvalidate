@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import appLogo from '../assets/virusLogo.svg';
 import initData from '../initdata/locations.json';
+import config from '../config.json'
+
+{/*This creates a page to input and manage location information*/}
 
 const App = () => {
   const [data, setData] = useState(initData);
@@ -23,13 +26,13 @@ const App = () => {
   }
 
   useEffect(() => {
-    fetchData('http://localhost:3000/api/locations');
+    fetchData(config.API_URL + '/locations');
   }, []);
   
   async function deleteEntry(id){
 	  var r= confirm("are you sure you want to delete the location?")
 	  if(r == true){
-		const response = await axios.delete('http://localhost:3000/api/location/'+id)
+		const response = await axios.delete(config.API_URL + '/location/'+id)
 		window.location.reload(false)
 	  }
   }
@@ -37,7 +40,7 @@ const App = () => {
   async function handleSubmit(event){
 	  event.preventDefault()
 	  const location = {name:event.target.locname.value,address:event.target.locaddress.value}
-	  const response = await axios.post('http://localhost:3000/api/location',location);
+	  const response = await axios.post(config.API_URL + '/location',location);
 	  window.location.reload(false)
   }
   
