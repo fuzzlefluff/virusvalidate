@@ -1,75 +1,66 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import appLogo from '../assets/virusLogo.svg';
-import initData from '../initdata/locations.json';
-import config from '../config.json'
+import config from '../config.json';
 
-{/*This creates a page to manage and delete appointments in the database*/}
-
-const App = () => {
-  const [appointmentData, setappointmentData] = useState([]);
+const Appointments = () => {
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [locationData, setLocationData] = useState([]);
+  const [locations, setLocations] = useState([]);
 
   async function fetchData() {
-  try {
-    // Get appointments data
-    const responseAppointments = await axios.get(config.API_URL + '/appointments');
-    setappointmentData(responseAppointments.data.data);
-    setError(null);
-  } catch (err) {
-    setError(err.message);
-    setappointmentData(initData);
-  }
+    try {
+      const responseAppointments = await axios.get(config.API_URL + '/appointments');
+      setAppointments(responseAppointments.data.data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      setAppointments([]);
+    }
 
-  try {
-    // Get locations data
-    const responseLocations = await axios.get(config.API_URL + '/locations');
-    setLocationData(responseLocations.data.data);
-    setError(null);
-  } catch (err) {
-    setError(err.message);
-    setLocationData(initData);
-  }
+    try {
+      const responseLocations = await axios.get(config.API_URL + '/locations');
+      setLocations(responseLocations.data.data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      setLocations([]);
+    }
 
-  setLoading(false); // Set loading to false after fetching data
-}
+    setLoading(false);
+  }
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  async function deleteEntry(id){
-    var r= confirm("Are you sure you want to delete the appointment?");
-    if(r === true){
-      const response = await axios.delete(config.API_URL + '/appointment/'+id);
-      window.location.reload(false);
+  async function deleteAppointment(id) {
+    const confirmed = window.confirm('Are you sure you want to delete this appointment?');
+    if (confirmed) {
+      try {
+        await axios.delete(config.API_URL + '/appointment/' + id);
+        fetchData(); // Refresh the data after deleting
+      } catch (err) {
+        setError('Error deleting appointment: ' + err.message);
+      }
     }
   }
-  
+
   function getLocationName(id) {
-  var returnLoc = locationData.find(location => location._id == id);
-  if (returnLoc) {
-    return returnLoc.name;
-  } else {
-    return "Invalid ID!";
+    const location = locations.find((loc) => loc._id === id);
+    return location ? location.name : 'Invalid ID';
   }
-}
+
   return (
     <div className="app-container">
       <h2>Appointments</h2>
       <div className="apiinfo">
         {loading && <div>Getting data from backend...</div>}
-        {error && (
-          <div id="error">
-            There is a problem getting data from the API: - {error}
-          </div>
-        )}
+        {error && <div id="error">There is a problem getting data from the API: - {error}</div>}
       </div>
       <div>
-        {appointmentData.length > 0 && locationData.length > 0 && (
+        {appointments.length > 0 && locations.length > 0 && (
           <table>
             <thead>
               <tr>
@@ -82,17 +73,27 @@ const App = () => {
               </tr>
             </thead>
             <tbody>
-              {appointmentData.map((appointment) => (
+              {appointments.map((appointment) => (
                 <tr key={appointment._id}>
                   <td>{new Date(appointment.date).toLocaleDateString('en-US')}</td>
                   <td>{getLocationName(appointment.location)}</td>
                   <td>{appointment.visitors.length}</td>
-                  <td>{appointment.conditions.length}</td>
+					<td>
+                    {new Set(
+                      appointment.visitors
+                        .flatMap((visitor) => visitor.conditions.map((condition) => condition.condition))
+                    ).size}
+                  </td>
+
                   <td>
-					<button type="link"><a href={`/validation/${appointment._id}`}>Validate</a></button>
+                    <button type="link">
+                      <a href={`/validation/${appointment._id}`}>Validate</a>
+                    </button>
                   </td>
                   <td>
-                    <button type="delete" onClick={() => deleteEntry(appointment._id)}>Delete</button>
+                    <button type="delete" onClick={() => deleteAppointment(appointment._id)}>
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -100,9 +101,11 @@ const App = () => {
           </table>
         )}
       </div>
-	  <button type="link"><a href={`/appointment`}>Create New Appointment</a></button>
+      <button type="link">
+        <a href={`/appointment`}>Create New Appointment</a>
+      </button>
     </div>
   );
 };
 
-export default App;
+export default Appointments;

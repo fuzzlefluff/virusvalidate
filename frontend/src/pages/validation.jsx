@@ -22,33 +22,45 @@ async function fetchData() {
   const appointmentId = url.split('/')[2];
 
   try {
-    // Get appointments data
+    // Get appointment data
     const responseAppointments = await axios.get(config.API_URL + '/appointment/'+appointmentId);
     setAppointmentData(responseAppointments.data.data);
-
-    const locationresponse = await axios.get(config.API_URL + '/location/'+ responseAppointments.data.data.location[0]);
-    setLocationData(locationresponse.data.data);
-
-    const visitorsArray = [];
-    for (let i = 0; i < responseAppointments.data.data.visitors.length; i++) {
-      var visitorresponse = await axios.get(config.API_URL + '/visitor/'+responseAppointments.data.data.visitors[i]);
-	  visitorsArray.push(visitorresponse.data.data);
-    }
-    setVisitorData(visitorsArray);
 	
+	console.log(responseAppointments.data.data);
+	
+    const locationresponse = await axios.get(config.API_URL + '/location/'+ responseAppointments.data.data.location);
+    setLocationData(locationresponse.data.data);
+	
+	
+    const visitorsArray = [];
 	const conditionsArray = [];
-    for (let i = 0; i < responseAppointments.data.data.conditions.length; i++) {
-      var conditionresponse = await axios.get(config.API_URL + '/condition/'+responseAppointments.data.data.conditions[i]);
-	  conditionsArray.push(conditionresponse.data.data);
+const uniqueConditions = {}; // Create an object to store unique conditions
+
+for (let i = 0; i < responseAppointments.data.data.visitors.length; i++) {
+  const visitorresponse = await axios.get(config.API_URL + '/visitor/' + responseAppointments.data.data.visitors[i].visitor);
+  visitorsArray.push(visitorresponse.data.data);
+
+  for (let j = 0; j < responseAppointments.data.data.visitors[i].conditions.length; j++) {
+    const conditionresponse = await axios.get(config.API_URL + '/condition/' + responseAppointments.data.data.visitors[i].conditions[j].condition);
+    const conditionData = conditionresponse.data.data;
+
+    // Check if the condition name is unique
+    if (!uniqueConditions[conditionData.name]) {
+      uniqueConditions[conditionData.name] = true; // Mark as seen
+      conditionsArray.push(conditionData);
     }
+  }
+}
+
+	
+	console.log(visitorsArray);
+	console.log(conditionsArray);
+	setVisitorData(visitorsArray);
     setConditionData(conditionsArray);
 	
     setError(null);
   } catch (err) {
     setError(err.message);
-    setAppointmentData(initVisitor);
-    setLocationData(initVisitor);
-    setVisitors([]);
   }
   
   setLoading(false); // Set loading to false after fetching data

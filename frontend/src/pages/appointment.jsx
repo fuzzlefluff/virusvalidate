@@ -21,6 +21,7 @@ function App() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [value, onChange] = useState(null);
+
 	
 	
 	async function fetchData() {
@@ -60,11 +61,16 @@ function App() {
 	event.preventDefault()
 	console.log("submit function running")
 	const appointment = {
-		date: value,
-		location: selectedLocation,
-		conditions: selectedConditions,
-		visitors: selectedVisitors
-	}
+            date: value,
+            location: selectedLocation,
+            visitorsConditions: selectedVisitors.map((visitorId) => {
+                return {
+                    visitor: visitorId,
+                    conditions: selectedConditions || [],
+                };
+            }),
+        };
+	console.log(appointment);
 	const response = await axios.post(config.API_URL + '/appointment', appointment);
 	window.location.href = "/appointments";
   }
