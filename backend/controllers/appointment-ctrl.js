@@ -10,9 +10,6 @@ const createAppointment = async (req, res) => {
             error: 'You must provide an appointment',
         });
     }
-	
-	console.log("Entire req.body:");
-    console.log(req.body);
 
     const appointment = new Appointment({
     location: body.location,
@@ -64,9 +61,9 @@ const updateAppointment = (req, res) => {
             }
 
             // Update appointment data here
-            appointment.visitorsConditions = body.visitorsConditions;
             appointment.location = body.location;
             appointment.date = body.date;
+            appointment.visitors = body.visitors;
 
             appointment
                 .save()

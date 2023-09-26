@@ -14,6 +14,7 @@ function App() {
   const [locationData, setLocationData] = useState({});
   const [conditionData, setConditionData] = useState([]);
   const [visitorData, setVisitorData] = useState([]);
+  const [selectedConditions, setSelectedConditions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -36,16 +37,41 @@ function App() {
       const visitorResponse = await axios.get(config.API_URL + '/visitors/');
       setVisitorData(visitorResponse.data.data);
 
-
       console.log(responseAppointments.data.data);
-      console.log(visitorResponse.data.data);
-
       setError(null);
     }
     catch (err) {
       setError(err.message);
     }
     setLoading(false); // Set loading to false after fetching data
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    console.log("submit function running");
+    const appointment = {
+      _id: appointmentData._id,
+      date: appointmentData.date,
+      location: appointmentData.location,
+      visitors: appointmentData.visitors,
+    };
+
+    appointment.visitors.forEach((vis) => {
+      vis.conditions.forEach((cond) => {
+        if (selectedConditions.includes(cond._id)) {
+          cond.conditionMet = true;
+        }
+        else {
+          cond.conditionMet = false;
+        }
+      });
+    });
+
+    console.log(appointment);
+    const response = await axios.put(config.API_URL + '/appointment/' + appointment._id, appointment);
+    console.log(response);
+    window.location.href = "/appointments";
+
   }
 
   useEffect(() => {
@@ -87,56 +113,67 @@ function App() {
           </div>
         )}
       </div>
-      {!loading && !error && appointmentData && (
-        <>
-          <br></br>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointmentData.visitors.map((visitor) => (
-                <>
-                  <tr key={visitor.visitor}>
-                    <td>{getVisitorName(visitor.visitor)}</td>
-                    <td>{getVisitorEmail(visitor.visitor)}</td>
-                  </tr><tr>
-                    <td colSpan="3">
-                      <div id="conditiontable">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-                              <th>Description</th>
-                              <th>Are they healthy?</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {visitor.conditions.map((condition) => (
-                              <tr key={condition._id}>
-                                <td>{getConditionName(condition.condition)}</td>
-                                <td>{getConditionDescription(condition.condition)}</td>
-                                <td><input type="checkbox" /></td>
+      <form onSubmit={handleSubmit}>
+        {!loading && !error && appointmentData && (
+          <>
+            <br></br>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                {appointmentData.visitors.map((visitor) => (
+                  <>
+                    <tr key={visitor._id}>
+                      <td>{getVisitorName(visitor.visitor)}</td>
+                      <td>{getVisitorEmail(visitor.visitor)}</td>
+                    </tr><tr>
+                      <td colSpan="3">
+                        <div id="conditiontable">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Are they healthy?</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                  </tr></>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
-      <div>
-        <button type="submit">
-          <a href={`/appointments`}>Submit</a>
-        </button>
-      </div>
+                            </thead>
+                            <tbody>
+                              {visitor.conditions.map((condition) => (
+                                <tr key={condition._id}>
+                                  <td>{getConditionName(condition.condition)}</td>
+                                  <td>{getConditionDescription(condition.condition)}</td>
+                                  <td>
+                                    <input
+                                      type="checkbox"
+                                      defaultChecked={condition.conditionMet}
+                                      onChange={(event) => {
+                                        if (event.target.checked) {
+                                          setSelectedConditions([...selectedConditions, condition._id]);
+                                        } else {
+                                          setSelectedConditions(selectedConditions.filter((id) => id !== condition._id));
+                                        }
+                                      }}
+                                    />
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </td>
+                    </tr></>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+
+        <button type="submit" onSubmit={handleSubmit}>Submit</button>
+      </form>
     </div>
   )
 }
