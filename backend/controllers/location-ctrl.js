@@ -1,3 +1,4 @@
+//use the database schema we have defined
 const Location = require('../models/location-model')
 
 createLocation = (req, res) => {

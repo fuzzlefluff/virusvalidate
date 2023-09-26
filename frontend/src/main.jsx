@@ -1,3 +1,5 @@
+{/* This is our main page, where we define what pages our app will serve, and what URL paths are needed to get to them
+	React has some internal routing to minimize sending the same data over and over, but pages can also be directly gone to from the URL call*/}
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {
