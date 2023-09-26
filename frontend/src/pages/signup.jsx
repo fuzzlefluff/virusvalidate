@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios'
 import config from '../config.json'
 
-{/*This creates a page to input and manage appointment information*/}
+{/*This creates a page to input and manage appointment information*/ }
 
 function App() {
   const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ function App() {
     password: '',
     confirmPassword: '',
   });
-  
+
   const [error, setError] = useState(null);
 
   const handleInputChange = (event) => {
@@ -22,32 +22,32 @@ function App() {
     }));
   };
 
-  async function handleSubmit(event){
+  async function handleSubmit(event) {
     event.preventDefault()
 
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
-	
-	var username = event.target.elements.username.value;
-	const email = event.target.elements.email.value.toString();
-	const password = event.target.elements.password.value.toString();
-	const account = {username,email,password}
-	let response;
-	  try{
-	  response = await axios.post(config.API_URL + 'account',account);
-	  }
-	  catch(err) {
-		 setError(err.message);
-		 return
-	  }
-	  window.location.href = "/login";
+
+    var username = event.target.elements.username.value;
+    const email = event.target.elements.email.value.toString();
+    const password = event.target.elements.password.value.toString();
+    const account = { username, email, password }
+    let response;
+    try {
+      response = await axios.post(config.API_URL + 'account', account);
+    }
+    catch (err) {
+      setError(err.message);
+      return
+    }
+    window.location.href = "/login";
   };
 
   return (
     <div className="App">
-	<div className="apiinfo">
+      <div className="apiinfo">
         {error && (
           <div id="error">
             Login has failed

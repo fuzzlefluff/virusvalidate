@@ -1,4 +1,4 @@
-{/*<!-- Camren Landry -->*/}
+{/*<!-- Camren Landry -->*/ }
 import React from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -29,27 +29,27 @@ const App = () => {
   }, []);
 
 
-  async function deleteEntry(id){
-	  var r= confirm("are you sure you want to delete the condition?")
-	  if(r == true){
-		const response = await axios.delete(config.API_URL + '/condition/'+id)
-		window.location.reload(false)
-	  }
+  async function deleteEntry(id) {
+    var r = confirm("are you sure you want to delete the condition?")
+    if (r == true) {
+      const response = await axios.delete(config.API_URL + '/condition/' + id)
+      window.location.reload(false)
+    }
   }
-  
-  async function handleSubmit(event){
-	  event.preventDefault()
-	  const condition = {
-		  name:event.target.name.value,
-		  description:event.target.description.value
-		}
-	  const response = await axios.post(config.API_URL + '/condition',condition);
-	  window.location.reload(false)
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    const condition = {
+      name: event.target.name.value,
+      description: event.target.description.value
+    }
+    const response = await axios.post(config.API_URL + '/condition', condition);
+    window.location.reload(false)
   }
-  
+
   return (
     <div className="app-container">
-	<h2>Conditions</h2>
+      <h2>Conditions</h2>
       <div className="apiinfo">
         {loading && <div>Getting data from backend...</div>}
         {error && (
@@ -69,14 +69,14 @@ const App = () => {
               </tr>
             </thead>
             <tbody>
-				{data.map((condition) => (
-					<tr key={condition._id}>
-						<td key={`${condition._id}-name`}>{condition.name}</td>
-						<td key={`${condition._id}-description`}>{condition.description}</td>
-						<td key={`${condition._id}-delete`}> <button type="delete" onClick={() => deleteEntry(condition._id)}>Delete</button> </td>
-					</tr>
-				))}
-			</tbody>
+              {data.map((condition) => (
+                <tr key={condition._id}>
+                  <td key={`${condition._id}-name`}>{condition.name}</td>
+                  <td key={`${condition._id}-description`}>{condition.description}</td>
+                  <td key={`${condition._id}-delete`}> <button type="delete" onClick={() => deleteEntry(condition._id)}>Delete</button> </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         )}
       </div>

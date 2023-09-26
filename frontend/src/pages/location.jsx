@@ -5,7 +5,7 @@ import appLogo from '../assets/virusLogo.svg';
 import initData from '../initdata/locations.json';
 import config from '../config.json'
 
-{/*This creates a page to input and manage location information*/}
+{/*This creates a page to input and manage location information*/ }
 
 const App = () => {
   const [data, setData] = useState(initData);
@@ -28,25 +28,25 @@ const App = () => {
   useEffect(() => {
     fetchData(config.API_URL + '/locations');
   }, []);
-  
-  async function deleteEntry(id){
-	  var r= confirm("are you sure you want to delete the location?")
-	  if(r == true){
-		const response = await axios.delete(config.API_URL + '/location/'+id)
-		window.location.reload(false)
-	  }
+
+  async function deleteEntry(id) {
+    var r = confirm("are you sure you want to delete the location?")
+    if (r == true) {
+      const response = await axios.delete(config.API_URL + '/location/' + id)
+      window.location.reload(false)
+    }
   }
-  
-  async function handleSubmit(event){
-	  event.preventDefault()
-	  const location = {name:event.target.locname.value,address:event.target.locaddress.value}
-	  const response = await axios.post(config.API_URL + '/location',location);
-	  window.location.reload(false)
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    const location = { name: event.target.locname.value, address: event.target.locaddress.value }
+    const response = await axios.post(config.API_URL + '/location', location);
+    window.location.reload(false)
   }
-  
+
   return (
     <div className="app-container">
-	<h2>Locations</h2>
+      <h2>Locations</h2>
       <div className="apiinfo">
         {loading && <div>Getting data from backend...</div>}
         {error && (

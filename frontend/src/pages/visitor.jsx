@@ -5,7 +5,7 @@ import appLogo from '../assets/virusLogo.svg';
 import initData from '../initdata/visitors.json';
 import config from '../config.json'
 
-{/*This creates a page to input and manage Visitor information*/}
+{/*This creates a page to input and manage Visitor information*/ }
 
 const App = () => {
   const [data, setData] = useState(initData);
@@ -29,26 +29,26 @@ const App = () => {
     fetchData(config.API_URL + '/visitors');
   }, []);
 
- async function deleteEntry(id){
-	  var r= confirm("are you sure you want to delete the visitor?")
-	  if(r == true){
-		const response = await axios.delete(config.API_URL + '/visitor/'+id)
-		window.location.reload(false)
-	  }
+  async function deleteEntry(id) {
+    var r = confirm("are you sure you want to delete the visitor?")
+    if (r == true) {
+      const response = await axios.delete(config.API_URL + '/visitor/' + id)
+      window.location.reload(false)
+    }
   }
-  
-  async function handleSubmit(event){
-	  event.preventDefault()
-	  const visitor = {name:event.target.name.value,email:event.target.email.value}
-	  const response = await axios.post(config.API_URL + '/visitor',visitor);
-	  window.location.reload(false)
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    const visitor = { name: event.target.name.value, email: event.target.email.value }
+    const response = await axios.post(config.API_URL + '/visitor', visitor);
+    window.location.reload(false)
   }
-  
+
   return (
     <div className="app-container">
-	
-		<h2 className="visitorheader">Visitors</h2>
-		<h2>Register New Visitor</h2>
+
+      <h2 className="visitorheader">Visitors</h2>
+      <h2>Register New Visitor</h2>
       <div className="vvcontainer">
         <form onSubmit={handleSubmit}>
           <input
@@ -97,7 +97,7 @@ const App = () => {
             </tbody>
           </table>
         )}
-		<br/>
+        <br />
       </div>
     </div>
   );

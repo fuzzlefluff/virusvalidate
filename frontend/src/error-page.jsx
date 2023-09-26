@@ -1,6 +1,6 @@
 import { useRouteError } from "react-router-dom";
 
-{/*This grabs an error message and posts it into HTML, we have it setup to be shown as a page or a fragment that is inserted*/}
+{/*This grabs an error message and posts it into HTML, we have it setup to be shown as a page or a fragment that is inserted*/ }
 
 export default function ErrorPage() {
   const error = useRouteError();

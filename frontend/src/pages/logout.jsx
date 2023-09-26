@@ -1,21 +1,21 @@
 import React from 'react'
 import { useState } from 'react'
-import { useEffect} from 'react'
+import { useEffect } from 'react'
 import axios from 'axios'
 
-{/*This creates a page that simply runs a function that deletes cookies and then immediatly redirects back to the homepage*/}
+{/*This creates a page that simply runs a function that deletes cookies and then immediatly redirects back to the homepage*/ }
 
 function App() {
-	 
+
   useEffect(() => {
     sessionStorage.removeItem("username");
-	window.location.href = "/appointments";
+    window.location.href = "/appointments";
   }, []);
-  
+
   return (
-	<div className="App">
-		<h1>Logout page</h1>
-	</div>
+    <div className="App">
+      <h1>Logout page</h1>
+    </div>
   )
 }
 

@@ -14,7 +14,7 @@
   height: 80px;
   background-color: #124b16;
   position: relative;
-  font-size:12;
+  font-size: 12;
   font-family: initial;
 }
 
@@ -22,13 +22,13 @@
   display: none;
 }
 
-.nav-elements {
+.nav-elements {}
+
+.logo {
+  width: 85px;
+  height: 85px;
 }
 
-.logo{
-	width:85px;
-	height:85px;
-}
 .nav-elements ul {
   display: flex;
   justify-content: space-between;

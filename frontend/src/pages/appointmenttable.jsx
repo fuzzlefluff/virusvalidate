@@ -78,7 +78,7 @@ const Appointments = () => {
                   <td>{new Date(appointment.date).toLocaleDateString('en-US')}</td>
                   <td>{getLocationName(appointment.location)}</td>
                   <td>{appointment.visitors.length}</td>
-					<td>
+                  <td>
                     {new Set(
                       appointment.visitors
                         .flatMap((visitor) => visitor.conditions.map((condition) => condition.condition))
