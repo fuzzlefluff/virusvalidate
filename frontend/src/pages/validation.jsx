@@ -42,7 +42,7 @@ function App() {
       responseAppointments.data.data.visitors.forEach((visitor) => {
         visitor.conditions.forEach((cond) => {
           if (cond.conditionMet === true) {
-            selectedConditions.push(cond.condition);
+            selectedConditions.push(cond._id);
           }
         })
       });
