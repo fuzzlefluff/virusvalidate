@@ -38,6 +38,15 @@ function App() {
       setVisitorData(visitorResponse.data.data);
 
       console.log(responseAppointments.data.data);
+      console.log(responseAppointments.data.data.visitors[0].conditions[0].conditionMet);
+      responseAppointments.data.data.visitors.forEach((visitor) => {
+        visitor.conditions.forEach((cond) => {
+          if (cond.conditionMet === true) {
+            selectedConditions.push(cond.condition);
+          }
+        })
+      });
+      console.log(selectedConditions);
       setError(null);
     }
     catch (err) {
@@ -82,12 +91,12 @@ function App() {
 
     const cond = conditionData.find((cond) => cond._id === id);
 
-    return cond ? cond.name : ''; // Handle the case when no matching condition is found
+    return cond ? cond.name : '';
   }
 
   function getConditionDescription(id) {
     const cond = conditionData.find((cond) => cond._id === id);
-    return cond ? cond.description : ''; // Handle the case when no matching condition is found
+    return cond ? cond.description : '';
   }
 
   function getVisitorName(id) {
