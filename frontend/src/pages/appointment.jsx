@@ -1,15 +1,16 @@
-import React from 'react'
-import { useState } from 'react'
-import { useEffect } from 'react'
-import axios from 'axios'
-import DateTimePicker from 'react-datetime-picker'
-import appLogo from '../assets/virusLogo.svg'
-import initLocData from '../initdata/locations.json'
-import initVisData from '../initdata/visitors.json'
-import initCondData from '../initdata/conditions.json'
-import config from '../config.json'
+/* eslint-disable jsx-a11y/control-has-associated-label */
+/* eslint-disable react/button-has-type */
+/* eslint-disable no-underscore-dangle */
+import React, { useState, useEffect } from 'react';
 
-{/*This creates a page to input and create appointments*/ }
+import axios from 'axios';
+import DateTimePicker from 'react-datetime-picker';
+import initLocData from '../initdata/locations.json';
+import initVisData from '../initdata/visitors.json';
+import initCondData from '../initdata/conditions.json';
+import config from '../config.json';
+
+/* This creates a page to input and create appointments */
 
 function App() {
   const [locationData, setlocationData] = useState(initLocData);
@@ -21,61 +22,57 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [value, onChange] = useState(null);
-
-
+  const [storedAPIkey, setAPIKey] = useState('');
 
   async function fetchData() {
     try {
-      const response = await axios.get(config.API_URL + '/locations');
+      const response = await axios.get(`${config.API_URL}/locations`);
       setlocationData(response.data.data);
       setError(null);
     } catch (err) {
       setError(err.message);
-      setData(initData);
     } finally {
       setLoading(false);
     }
     try {
-      const response = await axios.get(config.API_URL + '/conditions');
+      const response = await axios.get(`${config.API_URL}/conditions`);
       setconditionData(response.data.data);
       setError(null);
     } catch (err) {
       setError(err.message);
-      setData(initData);
     } finally {
       setLoading(false);
     }
     try {
-      const response = await axios.get(config.API_URL + '/visitors');
+      const response = await axios.get(`${config.API_URL}/visitors`);
       setvisitorData(response.data.data);
       setError(null);
     } catch (err) {
       setError(err.message);
-      setData(initData);
     } finally {
       setLoading(false);
     }
   }
 
   async function handleSubmit(event) {
-    event.preventDefault()
-    console.log("submit function running")
+    event.preventDefault();
     const appointment = {
       date: value,
       location: selectedLocation,
-      visitorsConditions: selectedVisitors.map((visitorId) => {
-        return {
-          visitor: visitorId,
-          conditions: selectedConditions || [],
-        };
-      }),
+      visitorsConditions: selectedVisitors.map((visitorId) => ({
+        visitor: visitorId,
+        conditions: selectedConditions || [],
+      })),
     };
-    console.log(appointment);
-    const response = await axios.post(config.API_URL + '/appointment', appointment);
-    window.location.href = "/appointments";
+    await axios.post(`${config.API_URL}/appointment`, appointment, { headers: { apikey: storedAPIkey } });
+    window.location.href = '/appointments';
   }
 
   useEffect(() => {
+    const grabAPI = sessionStorage.getItem('apikey');
+    if (grabAPI) {
+      setAPIKey(grabAPI);
+    }
     fetchData();
   }, []);
 
@@ -86,7 +83,9 @@ function App() {
         {loading && <div>Getting data from backend...</div>}
         {error && (
           <div id="error">
-            There is a problem getting data from the API: - {error}
+            There is a problem getting data from the API: -
+            {' '}
+            {error}
           </div>
         )}
       </div>
@@ -106,20 +105,25 @@ function App() {
                 <tr key={condition._id}>
                   <td>{condition.name}</td>
                   <td>
-                    <input type="checkbox" onChange={(event) => {
-                      if (event.target.checked) {
-                        setSelectedConditions([...selectedConditions, condition._id])
-                      } else {
-                        setSelectedConditions(selectedConditions.filter((id) => id !== condition._id))
-                      }
-                    }} />
+                    <input
+                      type="checkbox"
+                      onChange={(event) => {
+                        if (event.target.checked) {
+                          setSelectedConditions([...selectedConditions, condition._id]);
+                        } else {
+                          setSelectedConditions(
+                            selectedConditions.filter((id) => id !== condition._id),
+                          );
+                        }
+                      }}
+                    />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-        <button type="link"><a href={`/conditions`}>Add Condition</a></button>
+        <button type="link"><a href="/conditions">Add Condition</a></button>
       </div>
 
       <div id="visitortable">
@@ -139,27 +143,28 @@ function App() {
                   <td>{visitor.name}</td>
                   <td>{visitor.email}</td>
                   <td>
-                    <input type="checkbox" onChange={(event) => {
-                      if (event.target.checked) {
-                        setSelectedVisitors([...selectedVisitors, visitor._id])
-                      } else {
-                        setSelectedVisitors(selectedVisitors.filter((id) => id !== visitor._id))
-                      }
-                    }} />
+                    <input
+                      type="checkbox"
+                      onChange={(event) => {
+                        if (event.target.checked) {
+                          setSelectedVisitors([...selectedVisitors, visitor._id]);
+                        } else {
+                          setSelectedVisitors(selectedVisitors.filter((id) => id !== visitor._id));
+                        }
+                      }}
+                    />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-        <button type="link"><a href={`/visitor`}>Add Visitor</a></button>
+        <button type="link"><a href="/visitor">Add Visitor</a></button>
       </div>
-
-
 
       <div className="container">
         <div id="dropdown">
-          <label>Select Appointment Location</label>
+          <div>Select Appointment Location</div>
           <br />
           <select defaultValue="" onChange={(event) => setSelectedLocation(event.target.value)}>
             <option disabled value=""> -- Select Location --</option>
@@ -170,23 +175,25 @@ function App() {
             ))}
           </select>
           <br />
-          <button type="link">
-            <a href="/location">Add Location</a>
-          </button>
+          <a href="/location">
+            <button type="link">
+              Add Location
+            </button>
+          </a>
         </div>
         <br />
         <div className="datetime">
-          <label>Select Appointment Time</label>
+          <div>Select Appointment Time</div>
           <br />
           <DateTimePicker onChange={onChange} value={value} />
         </div>
       </div>
       <form onSubmit={handleSubmit}>
-        <button type="submit" disabled={!value || !selectedLocation.length || !selectedConditions.length || !selectedVisitors.length} >Create Appointment</button>
+        <button type="submit" disabled={!value || !selectedLocation.length || !selectedConditions.length || !selectedVisitors.length || !storedAPIkey}>Create Appointment</button>
       </form>
 
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

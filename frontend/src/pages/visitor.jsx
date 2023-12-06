@@ -11,6 +11,7 @@ const App = () => {
   const [data, setData] = useState(initData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [storedAPIkey, setAPIKey] = useState('')
 
   async function fetchData(url) {
     try {
@@ -26,13 +27,17 @@ const App = () => {
   }
 
   useEffect(() => {
+    const grabAPI = sessionStorage.getItem('apikey')
+    if (grabAPI) {
+      setAPIKey(grabAPI)
+    }
     fetchData(config.API_URL + '/visitors');
   }, []);
 
   async function deleteEntry(id) {
     var r = confirm("are you sure you want to delete the visitor?")
     if (r == true) {
-      const response = await axios.delete(config.API_URL + '/visitor/' + id)
+      const response = await axios.delete(config.API_URL + '/visitor/' + id, { headers: { 'apikey': storedAPIkey } })
       window.location.reload(false)
     }
   }
@@ -40,7 +45,7 @@ const App = () => {
   async function handleSubmit(event) {
     event.preventDefault()
     const visitor = { name: event.target.name.value, email: event.target.email.value }
-    const response = await axios.post(config.API_URL + '/visitor', visitor);
+    const response = await axios.post(config.API_URL + '/visitor', visitor, { headers: { 'apikey': storedAPIkey } });
     window.location.reload(false)
   }
 
@@ -48,24 +53,6 @@ const App = () => {
     <div className="app-container">
 
       <h2 className="visitorheader">Visitors</h2>
-      <h2>Register New Visitor</h2>
-      <div className="vvcontainer">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            required="required"
-            placeholder="Visitor Name"
-          />
-          <input
-            type="email"
-            name="email"
-            required="required"
-            placeholder="Visitor email"
-          />
-          <button type="submit">Save Visitor Information</button>
-        </form>
-      </div>
       <div className="apiinfo">
         {loading && <div>Getting data from backend...</div>}
         {error && (
@@ -74,6 +61,28 @@ const App = () => {
           </div>
         )}
       </div>
+      {storedAPIkey !== '' && (
+        <div>
+          <h2>Register New Visitor</h2>
+          <div className="vvcontainer">
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="name"
+                required="required"
+                placeholder="Visitor Name"
+              />
+              <input
+                type="email"
+                name="email"
+                required="required"
+                placeholder="Visitor email"
+              />
+              <button type="submit">Submit</button>
+            </form>
+          </div>
+        </div>
+      )}
       <div>
         {data.length > 0 && (
           <table>
@@ -90,7 +99,7 @@ const App = () => {
                   <td>{visitor.name}</td>
                   <td>{visitor.email}</td>
                   <td>
-                    <button type="delete" onClick={() => deleteEntry(visitor._id)}>Delete</button>
+                    <button type="delete" onClick={() => deleteEntry(visitor._id)} disabled={!storedAPIkey}>Delete</button>
                   </td>
                 </tr>
               ))}

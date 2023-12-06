@@ -10,6 +10,7 @@ const App = () => {
   const [data, setData] = useState(initData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [storedAPIkey, setAPIKey] = useState('')
 
   async function fetchData(url) {
     try {
@@ -25,6 +26,10 @@ const App = () => {
   }
 
   useEffect(() => {
+    const grabAPI = sessionStorage.getItem('apikey')
+    if (grabAPI) {
+      setAPIKey(grabAPI)
+    }
     fetchData(config.API_URL + '/conditions');
   }, []);
 
@@ -32,7 +37,8 @@ const App = () => {
   async function deleteEntry(id) {
     var r = confirm("are you sure you want to delete the condition?")
     if (r == true) {
-      const response = await axios.delete(config.API_URL + '/condition/' + id)
+      console.log(id)
+      const response = await axios.delete(config.API_URL + '/condition/' + id, { headers: { 'apikey': storedAPIkey } })
       window.location.reload(false)
     }
   }
@@ -43,7 +49,7 @@ const App = () => {
       name: event.target.name.value,
       description: event.target.description.value
     }
-    const response = await axios.post(config.API_URL + '/condition', condition);
+    const response = await axios.post(config.API_URL + '/condition', condition, { headers: { 'apikey': storedAPIkey } });
     window.location.reload(false)
   }
 
@@ -55,6 +61,30 @@ const App = () => {
         {error && (
           <div id="error">
             There is a problem getting data from the API: - {error}
+          </div>
+        )}
+      </div>
+      <div>
+        {storedAPIkey !== '' && (
+          <div>
+            <h2>Create New Condition</h2>
+            <div className="vvcontainer">
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  name="name"
+                  required="required"
+                  placeholder="Condition Name"
+                />
+                <input
+                  type="text"
+                  name="description"
+                  required="required"
+                  placeholder="Condition Description"
+                />
+                <button type="submit">Submit</button>
+              </form>
+            </div>
           </div>
         )}
       </div>
@@ -73,30 +103,12 @@ const App = () => {
                 <tr key={condition._id}>
                   <td key={`${condition._id}-name`}>{condition.name}</td>
                   <td key={`${condition._id}-description`}>{condition.description}</td>
-                  <td key={`${condition._id}-delete`}> <button type="delete" onClick={() => deleteEntry(condition._id)}>Delete</button> </td>
+                  <td key={`${condition._id}-delete`}> <button type="delete" onClick={() => deleteEntry(condition._id)} disabled={!storedAPIkey}>Delete</button> </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-      </div>
-      <h2>Create New Condition</h2>
-      <div className="vvcontainer">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            required="required"
-            placeholder="Condition Name"
-          />
-          <input
-            type="text"
-            name="description"
-            required="required"
-            placeholder="Condition Description"
-          />
-          <button type="submit">Submit</button>
-        </form>
       </div>
     </div>
   );

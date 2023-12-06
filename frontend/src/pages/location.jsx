@@ -73,7 +73,14 @@ const App = () => {
   //Create a place to store whether we should skip re-rendering our table depending on paging
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
 
-  //Define the columns we are going to use in our TanStack Table (React Table)
+  const [storedAPIkey, setAPIKey] = useState('')
+
+  useEffect(() => {
+    const grabAPI = sessionStorage.getItem('apikey')
+    if (grabAPI) {
+      setAPIKey(grabAPI)
+    }
+  }, []);
   const columns = React.useMemo(
     () => [
       {
@@ -89,10 +96,22 @@ const App = () => {
       {
         header: 'Delete',
         accessorKey: '_id',
-        footer: (props) => props.column.id,
+        disableFilters: true,
+        cell: function ({ row }) {
+          return (
+
+            <button
+              type="delete"
+              onClick={() => row.original._id && deleteEntry(row.original._id)}
+              disabled={!storedAPIkey}
+            >
+              Delete
+            </button>
+          );
+        },
       },
     ],
-    []
+    [storedAPIkey] // Add storedAPIkey as a dependency
   );
 
   //Get our data from the API
@@ -152,51 +171,36 @@ const App = () => {
 
     const columnFilterValue = column.getFilterValue();
 
-    // Local state to manage the input values
-    const [minValue, setMinValue] = useState(Array.isArray(columnFilterValue) ? columnFilterValue[0] : '');
-    const [maxValue, setMaxValue] = useState(Array.isArray(columnFilterValue) ? columnFilterValue[1] : '');
+    // Local state to manage the input value
+    const [filterValue, setFilterValue] = useState(columnFilterValue || '');
 
-    const handleMinChange = (e) => {
-      setMinValue(e.target.value);
-      column.setFilterValue((old) => [
-        e.target.value,
-        Array.isArray(old) ? old[1] : '',
-      ]);
-    };
-
-    const handleMaxChange = (e) => {
-      setMaxValue(e.target.value);
-      column.setFilterValue((old) => [
-        Array.isArray(old) ? old[0] : '',
-        e.target.value,
-      ]);
+    const handleInputChange = (e) => {
+      setFilterValue(e.target.value);
+      column.setFilterValue(e.target.value);
     };
 
     return typeof firstValue === 'number' ? (
       <div className="">
         <input
           type="number"
-          value={minValue}
-          onChange={handleMinChange}
+          value={filterValue}
+          onChange={handleInputChange}
           placeholder={`Min`}
-
         />
         <input
           type="number"
-          value={maxValue}
-          onChange={handleMaxChange}
+          value={filterValue}
+          onChange={handleInputChange}
           placeholder={`Max`}
-
         />
       </div>
     ) : (
       <input
         type="text"
         key="searchheader"
-        value={columnFilterValue || ''}
-        onChange={(e) => column.setFilterValue(e.target.value)}
+        value={filterValue}
+        onChange={handleInputChange}
         placeholder={`Search...`}
-
       />
     );
   }
@@ -205,7 +209,8 @@ const App = () => {
   async function deleteEntry(id) {
     var r = confirm("are you sure you want to delete the location?")
     if (r == true) {
-      const response = await axios.delete(config.API_URL + '/location/' + id)
+      console.log(id)
+      const response = await axios.delete(config.API_URL + '/location/' + id, { headers: { 'apikey': storedAPIkey } })
       window.location.reload(false)
     }
   }
@@ -219,12 +224,13 @@ const App = () => {
   async function handleSubmit(event) {
     event.preventDefault()
     const location = { name: event.target.locname.value, address: event.target.locaddress.value }
-    const response = await axios.post(config.API_URL + '/location', location);
+    const response = await axios.post(config.API_URL + '/location', location, { headers: { 'apikey': storedAPIkey } });
     window.location.reload(false)
   }
 
   //We define our HTML page here
   return (
+
     <div className="app-container">
       <h2>Locations</h2>
       {/* Define a spot to render that we are still fetching data from the API, or the error that occured during said process*/}
@@ -235,7 +241,32 @@ const App = () => {
             There is a problem getting data from the API: - {error}
           </div>
         )}
+
       </div>
+      {/* Define a form to submit new data to the API databsae*/}
+      {storedAPIkey !== '' && (
+        <div>
+          <h2>Add a Location</h2>
+          <div className="vvcontainer">
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="locname"
+                required="required"
+                placeholder="Location Name"
+              />
+              <input
+                type="text"
+                name="locaddress"
+                required="required"
+                placeholder="Location Address"
+              />
+              <button type="submit">Submit</button>
+            </form>
+          </div>
+        </div>
+      )}
+
       <div>
         {/* Define our table if the table data is not null*/}
         {table ? (
@@ -349,29 +380,8 @@ const App = () => {
               </select>
             </div>
             <div>{table.getRowModel().rows.length} Rows</div>
-
           </div>
         ) : null}
-      </div>
-
-      {/* Define a form to submit new data to the API databsae*/}
-      <h2>Add a Location</h2>
-      <div className="vvcontainer">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="locname"
-            required="required"
-            placeholder="Location Name"
-          />
-          <input
-            type="text"
-            name="locaddress"
-            required="required"
-            placeholder="Location Address"
-          />
-          <button type="submit">Submit</button>
-        </form>
       </div>
     </div>
   );

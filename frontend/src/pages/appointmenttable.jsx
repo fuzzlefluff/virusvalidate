@@ -8,6 +8,7 @@ const Appointments = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [locations, setLocations] = useState([]);
+  const [storedAPIkey, setAPIKey] = useState('')
 
   async function fetchData() {
     try {
@@ -32,6 +33,10 @@ const Appointments = () => {
   }
 
   useEffect(() => {
+    const grabAPI = sessionStorage.getItem('apikey')
+    if (grabAPI) {
+      setAPIKey(grabAPI)
+    }
     fetchData();
   }, []);
 
@@ -39,7 +44,7 @@ const Appointments = () => {
     const confirmed = window.confirm('Are you sure you want to delete this appointment?');
     if (confirmed) {
       try {
-        await axios.delete(config.API_URL + '/appointment/' + id);
+        await axios.delete(config.API_URL + '/appointment/' + id, { headers: { 'apikey': storedAPIkey } });
         fetchData(); // Refresh the data after deleting
       } catch (err) {
         setError('Error deleting appointment: ' + err.message);
@@ -91,7 +96,7 @@ const Appointments = () => {
                     </button>
                   </td>
                   <td>
-                    <button type="delete" onClick={() => deleteAppointment(appointment._id)}>
+                    <button type="delete" onClick={() => deleteAppointment(appointment._id)} disabled={!storedAPIkey}>
                       Delete
                     </button>
                   </td>

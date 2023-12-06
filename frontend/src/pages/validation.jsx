@@ -17,6 +17,7 @@ function App() {
   const [selectedConditions, setSelectedConditions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [storedAPIkey, setAPIKey] = useState('')
 
 
   async function fetchData() {
@@ -77,13 +78,17 @@ function App() {
     });
 
     console.log(appointment);
-    const response = await axios.put(config.API_URL + '/appointment/' + appointment._id, appointment);
+    const response = await axios.put(config.API_URL + '/appointment/' + appointment._id, appointment, { headers: { 'apikey': storedAPIkey } });
     console.log(response);
     window.location.href = "/appointments";
 
   }
 
   useEffect(() => {
+    const grabAPI = sessionStorage.getItem('apikey')
+    if (grabAPI) {
+      setAPIKey(grabAPI)
+    }
     fetchData();
   }, []);
 
@@ -181,7 +186,7 @@ function App() {
           </>
         )}
 
-        <button type="submit" onSubmit={handleSubmit}>Submit</button>
+        <button type="submit" onSubmit={handleSubmit} disabled={!storedAPIkey}>Submit</button>
       </form>
     </div>
   )
