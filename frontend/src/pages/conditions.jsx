@@ -1,16 +1,17 @@
-{/*<!-- Camren Landry -->*/ }
-import React from 'react';
-import { useState, useEffect } from 'react';
+/* eslint-disable no-alert */
+/* eslint-disable no-restricted-globals */
+/* eslint-disable react/button-has-type */
+/* eslint-disable no-underscore-dangle */
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import appLogo from '../assets/virusLogo.svg';
 import initData from '../initdata/conditions.json';
-import config from '../config.json'
+import config from '../config.json';
 
-const App = () => {
+function App() {
   const [data, setData] = useState(initData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [storedAPIkey, setAPIKey] = useState('')
+  const [storedAPIkey, setAPIKey] = useState('');
 
   async function fetchData(url) {
     try {
@@ -26,31 +27,29 @@ const App = () => {
   }
 
   useEffect(() => {
-    const grabAPI = sessionStorage.getItem('apikey')
+    const grabAPI = sessionStorage.getItem('apikey');
     if (grabAPI) {
-      setAPIKey(grabAPI)
+      setAPIKey(grabAPI);
     }
-    fetchData(config.API_URL + '/conditions');
+    fetchData(`${config.API_URL}/conditions`);
   }, []);
 
-
   async function deleteEntry(id) {
-    var r = confirm("are you sure you want to delete the condition?")
-    if (r == true) {
-      console.log(id)
-      const response = await axios.delete(config.API_URL + '/condition/' + id, { headers: { 'apikey': storedAPIkey } })
-      window.location.reload(false)
+    const r = confirm('are you sure you want to delete the condition?');
+    if (r === true) {
+      await axios.delete(`${config.API_URL}/condition/${id}`, { headers: { apikey: storedAPIkey } });
+      window.location.reload(false);
     }
   }
 
   async function handleSubmit(event) {
-    event.preventDefault()
+    event.preventDefault();
     const condition = {
       name: event.target.name.value,
-      description: event.target.description.value
-    }
-    const response = await axios.post(config.API_URL + '/condition', condition, { headers: { 'apikey': storedAPIkey } });
-    window.location.reload(false)
+      description: event.target.description.value,
+    };
+    await axios.post(`${config.API_URL}/condition`, condition, { headers: { apikey: storedAPIkey } });
+    window.location.reload(false);
   }
 
   return (
@@ -60,7 +59,9 @@ const App = () => {
         {loading && <div>Getting data from backend...</div>}
         {error && (
           <div id="error">
-            There is a problem getting data from the API: - {error}
+            There is a problem getting data from the API: -
+            {' '}
+            {error}
           </div>
         )}
       </div>
@@ -103,7 +104,11 @@ const App = () => {
                 <tr key={condition._id}>
                   <td key={`${condition._id}-name`}>{condition.name}</td>
                   <td key={`${condition._id}-description`}>{condition.description}</td>
-                  <td key={`${condition._id}-delete`}> <button type="delete" onClick={() => deleteEntry(condition._id)} disabled={!storedAPIkey}>Delete</button> </td>
+                  <td key={`${condition._id}-delete`}>
+                    {' '}
+                    <button type="delete" onClick={() => deleteEntry(condition._id)} disabled={!storedAPIkey}>Delete</button>
+                    {' '}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -112,6 +117,6 @@ const App = () => {
       </div>
     </div>
   );
-};
+}
 
 export default App;

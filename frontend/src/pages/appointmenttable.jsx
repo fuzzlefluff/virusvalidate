@@ -1,18 +1,20 @@
+/* eslint-disable no-alert */
+/* eslint-disable react/button-has-type */
+/* eslint-disable no-underscore-dangle */
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import appLogo from '../assets/virusLogo.svg';
 import config from '../config.json';
 
-const Appointments = () => {
+function Appointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [locations, setLocations] = useState([]);
-  const [storedAPIkey, setAPIKey] = useState('')
+  const [storedAPIkey, setAPIKey] = useState('');
 
   async function fetchData() {
     try {
-      const responseAppointments = await axios.get(config.API_URL + '/appointments');
+      const responseAppointments = await axios.get(`${config.API_URL}/appointments`);
       setAppointments(responseAppointments.data.data);
       setError(null);
     } catch (err) {
@@ -21,7 +23,7 @@ const Appointments = () => {
     }
 
     try {
-      const responseLocations = await axios.get(config.API_URL + '/locations');
+      const responseLocations = await axios.get(`${config.API_URL}/locations`);
       setLocations(responseLocations.data.data);
       setError(null);
     } catch (err) {
@@ -33,9 +35,9 @@ const Appointments = () => {
   }
 
   useEffect(() => {
-    const grabAPI = sessionStorage.getItem('apikey')
+    const grabAPI = sessionStorage.getItem('apikey');
     if (grabAPI) {
-      setAPIKey(grabAPI)
+      setAPIKey(grabAPI);
     }
     fetchData();
   }, []);
@@ -44,10 +46,10 @@ const Appointments = () => {
     const confirmed = window.confirm('Are you sure you want to delete this appointment?');
     if (confirmed) {
       try {
-        await axios.delete(config.API_URL + '/appointment/' + id, { headers: { 'apikey': storedAPIkey } });
+        await axios.delete(`${config.API_URL}/appointment/${id}`, { headers: { apikey: storedAPIkey } });
         fetchData(); // Refresh the data after deleting
       } catch (err) {
-        setError('Error deleting appointment: ' + err.message);
+        setError(`Error deleting appointment: ${err.message}`);
       }
     }
   }
@@ -62,7 +64,12 @@ const Appointments = () => {
       <h2>Appointments</h2>
       <div className="apiinfo">
         {loading && <div>Getting data from backend...</div>}
-        {error && <div id="error">There is a problem getting data from the API: - {error}</div>}
+        {error && (
+        <div id="error">
+          There is a problem getting data from the API: -
+          {error}
+        </div>
+        )}
       </div>
       <div>
         {appointments.length > 0 && locations.length > 0 && (
@@ -86,7 +93,9 @@ const Appointments = () => {
                   <td>
                     {new Set(
                       appointment.visitors
-                        .flatMap((visitor) => visitor.conditions.map((condition) => condition.condition))
+                        .flatMap(
+                          (visitor) => visitor.conditions.map((condition) => condition.condition),
+                        ),
                     ).size}
                   </td>
 
@@ -107,10 +116,10 @@ const Appointments = () => {
         )}
       </div>
       <button type="link">
-        <a href={`/appointment`}>Create New Appointment</a>
+        <a href="/appointment">Create New Appointment</a>
       </button>
     </div>
   );
-};
+}
 
 export default Appointments;

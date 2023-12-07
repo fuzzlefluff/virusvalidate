@@ -1,5 +1,7 @@
+/* eslint-disable block-scoped-var */
+/* eslint-disable vars-on-top */
+/* eslint-disable no-var */
 import React, { useState } from 'react';
-
 import axios from 'axios';
 import config from '../config.json';
 

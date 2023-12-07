@@ -1,21 +1,20 @@
-
 import React, { useEffect } from 'react';
 
-{/*This creates a page that simply runs a function that deletes cookies and then immediatly redirects back to the homepage*/ }
+/* This creates a page that simply runs a function that deletes cookies
+and then immediatly redirects back to the homepage */
 
 function App() {
   useEffect(() => {
     const logout = async () => {
-
       // Remove items from sessionStorage
-      sessionStorage.removeItem("username");
-      sessionStorage.removeItem("apikey");
+      sessionStorage.removeItem('username');
+      sessionStorage.removeItem('apikey');
 
       // Simulate an asynchronous operation (replace with actual async logic if needed)
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => { setTimeout(resolve, 100); });
 
       // Redirect to the homepage
-      window.location.href = "/appointments";
+      window.location.href = '/appointments';
     };
 
     logout();

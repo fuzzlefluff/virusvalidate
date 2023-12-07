@@ -1,17 +1,20 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+/* eslint-disable no-alert */
+/* eslint-disable no-restricted-globals */
+/* eslint-disable react/button-has-type */
+/* eslint-disable no-underscore-dangle */
+import React, { useState, useEffect } from 'react';
+
 import axios from 'axios';
-import appLogo from '../assets/virusLogo.svg';
 import initData from '../initdata/visitors.json';
-import config from '../config.json'
+import config from '../config.json';
 
-{/*This creates a page to input and manage Visitor information*/ }
+/* This creates a page to input and manage Visitor information */
 
-const App = () => {
+function App() {
   const [data, setData] = useState(initData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [storedAPIkey, setAPIKey] = useState('')
+  const [storedAPIkey, setAPIKey] = useState('');
 
   async function fetchData(url) {
     try {
@@ -27,26 +30,26 @@ const App = () => {
   }
 
   useEffect(() => {
-    const grabAPI = sessionStorage.getItem('apikey')
+    const grabAPI = sessionStorage.getItem('apikey');
     if (grabAPI) {
-      setAPIKey(grabAPI)
+      setAPIKey(grabAPI);
     }
-    fetchData(config.API_URL + '/visitors');
+    fetchData(`${config.API_URL}/visitors`);
   }, []);
 
   async function deleteEntry(id) {
-    var r = confirm("are you sure you want to delete the visitor?")
-    if (r == true) {
-      const response = await axios.delete(config.API_URL + '/visitor/' + id, { headers: { 'apikey': storedAPIkey } })
-      window.location.reload(false)
+    const r = confirm('are you sure you want to delete the visitor?');
+    if (r === true) {
+      await axios.delete(`${config.API_URL}/visitor/${id}`, { headers: { apikey: storedAPIkey } });
+      window.location.reload(false);
     }
   }
 
   async function handleSubmit(event) {
-    event.preventDefault()
-    const visitor = { name: event.target.name.value, email: event.target.email.value }
-    const response = await axios.post(config.API_URL + '/visitor', visitor, { headers: { 'apikey': storedAPIkey } });
-    window.location.reload(false)
+    event.preventDefault();
+    const visitor = { name: event.target.name.value, email: event.target.email.value };
+    await axios.post(`${config.API_URL}/visitor`, visitor, { headers: { apikey: storedAPIkey } });
+    window.location.reload(false);
   }
 
   return (
@@ -57,7 +60,9 @@ const App = () => {
         {loading && <div>Getting data from backend...</div>}
         {error && (
           <div id="error">
-            There is a problem getting data from the API: - {error}
+            There is a problem getting data from the API: -
+            {' '}
+            {error}
           </div>
         )}
       </div>
@@ -110,6 +115,6 @@ const App = () => {
       </div>
     </div>
   );
-};
+}
 
 export default App;

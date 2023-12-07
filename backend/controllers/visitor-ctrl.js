@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 // use the database schema we have defined
 const VisitorSchema = require('../models/visitor-model');
 
@@ -48,7 +49,7 @@ const createVisitor = (req, res) => {
     const visitor = new VisitorSchema(body);
 
     if (!visitor) {
-      return res.status(400).json({ success: false, error: err });
+      return res.status(400).json({ success: false, error: 'invalid body' });
     }
 
     visitor
@@ -62,10 +63,8 @@ const createVisitor = (req, res) => {
         error,
         message: 'Visitor not created!',
       }));
-  }).catch((error) => {
-    console.error('Error checking API key:', error);
-    return res.status(500).json({ success: false, error: 'Internal Server Error' });
-  });
+    return null;
+  }).catch(() => res.status(500).json({ success: false, error: 'Internal Server Error' }));
 };
 
 // this method updates a visitor in the database

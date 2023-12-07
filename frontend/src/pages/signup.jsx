@@ -1,8 +1,9 @@
+/* eslint-disable no-alert */
 import React, { useState } from 'react';
-import axios from 'axios'
-import config from '../config.json'
+import axios from 'axios';
+import config from '../config.json';
 
-{/*This creates a page to input and manage appointment information*/ }
+/* This creates a page to input and manage appointment information */
 
 function App() {
   const [formData, setFormData] = useState({
@@ -23,27 +24,26 @@ function App() {
   };
 
   async function handleSubmit(event) {
-    event.preventDefault()
+    event.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
 
-    var username = event.target.elements.username.value;
+    const username = event.target.elements.username.value;
     const email = event.target.elements.email.value.toString();
     const password = event.target.elements.password.value.toString();
-    const account = { username, email, password }
-    let response;
+    const account = { username, email, password };
+
     try {
-      response = await axios.post(config.API_URL + 'account', account);
-    }
-    catch (err) {
+      await axios.post(`${config.API_URL}account`, account);
+    } catch (err) {
       setError(err.message);
-      return
+      return;
     }
-    window.location.href = "/login";
-  };
+    window.location.href = '/login';
+  }
 
   return (
     <div className="App">
@@ -62,7 +62,6 @@ function App() {
               type="text"
               id="signupUsername"
               className="loginform__input"
-              autoFocus
               placeholder="Username"
               required="required"
               name="username"
@@ -74,7 +73,6 @@ function App() {
             <input
               type="email"
               className="loginform__input"
-              autoFocus
               placeholder="Email Address"
               required="required"
               name="email"
@@ -86,7 +84,6 @@ function App() {
             <input
               type="password"
               className="loginform__input"
-              autoFocus
               placeholder="Password"
               required="required"
               name="password"
@@ -98,7 +95,6 @@ function App() {
             <input
               type="password"
               className="loginform__input"
-              autoFocus
               placeholder="Confirm password"
               required="required"
               name="confirmPassword"

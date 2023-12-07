@@ -1,4 +1,5 @@
-// we are telling mongoose the structure of our data and exporting this object for use in our controllers
+// we are telling mongoose the structure of our data
+// and exporting this object for use in our controllers
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
