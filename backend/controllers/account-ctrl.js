@@ -1,8 +1,11 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-underscore-dangle */
-// use the database schema we have defined
-const crypto = require('node:crypto');
-const AccountSchema = require('../models/account-model');
 // use the crypto module to generate keys on demand
+const crypto = require('node:crypto');
+// use bycrypt to salt and hash our passwords for safe storing and validation
+const bcrypt = require('bcrypt');
+// use the database schema we have defined
+const AccountSchema = require('../models/account-model');
 
 // this method generates an API key to save to the account.
 function generateRandomApiKey(length = 32) {
@@ -20,29 +23,38 @@ const createAccount = (req, res) => {
   if (!body) {
     return res.status(400).json({
       success: false,
-      error: 'You must provide a Account',
+      error: 'You must provide an Account',
     });
   }
 
   const account = new AccountSchema(body);
   account.apikey = generateRandomApiKey();
 
-  if (!account) {
-    return res.status(400).json({ success: false, error: 'not found' });
-  }
+  // hash our password with bcrypt and store that instead.
+  return bcrypt.hash(account.password.toString(), 10)
+    .then((hash) => {
+      account.password = hash;
 
-  account
-    .save()
-    .then(() => res.status(201).json({
-      success: true,
-      id: AccountSchema._id,
-      message: 'Account created!',
-    }))
-    .catch((error) => res.status(400).json({
-      error,
-      message: 'Account not created!',
-    }));
-  return null;
+      // Save the account after the password has been hashed
+      account.save()
+        .then(() => res.status(201).json({
+          success: true,
+          id: account._id,
+          message: 'Account created!',
+        }))
+        .catch((saveError) => {
+          res.status(400).json({
+            error: saveError,
+            message: 'Account not created!',
+          });
+        });
+    })
+    .catch((hashError) => {
+      res.status(500).json({
+        error: hashError,
+        message: 'Internal Server Error!',
+      });
+    });
 };
 
 // this method updates an account in the database
@@ -68,21 +80,26 @@ const updateAccount = (req, res) => {
       // Update account data here
       const updatedAccount = {
         name: body.name,
-        address: body.address,
+        password: body.password,
         apikey: generateRandomApiKey(),
       };
-      Object.assign(Account, updatedAccount);
+      // hash our updated password and store that instead.
+      return bcrypt.hash(updatedAccount.password, 10).then((hash) => {
+        updatedAccount.password = hash;
 
-      return Account.save()
-        .then(() => res.status(200).json({
-          success: true,
-          id: Account._id,
-          message: 'Account updated!',
-        }))
-        .catch((error) => res.status(404).json({
-          error,
-          message: 'Account not updated!',
-        }));
+        Object.assign(Account, updatedAccount);
+
+        return Account.save()
+          .then(() => res.status(200).json({
+            success: true,
+            id: Account._id,
+            message: 'Account updated!',
+          }))
+          .catch((error) => res.status(404).json({
+            error,
+            message: 'Account not updated!',
+          }));
+      }).catch((error) => { throw error; });
     })
     .catch((err) => res.status(404).json({
       err,
@@ -153,19 +170,22 @@ const loginCheck = (req, res) => {
       if (!account) {
         return res.status(400).json({ success: false, error: 'Login Failed' });
       }
-
-      if (req.body.password == null) {
-        return res.status(400).json({ success: false, error: 'Login Failed' });
-      }
-      if (req.body.password.toString() !== account.password.toString()) {
+      if (req.body.password === null) {
         return res.status(400).json({ success: false, error: 'Login Failed' });
       }
 
-      return res.status(200).json({
-        success: true,
-        username: account.username,
-        apikey: account.apikey,
-      });
+      // Use bcrypt.compare to compare the plaintext password with the stored hash
+      return bcrypt.compare(req.body.password.toString(), account.password.toString())
+        .then((bcryptValidated) => {
+          if (bcryptValidated) {
+            return res.status(200).json({
+              success: true,
+              username: account.username,
+              apikey: account.apikey,
+            });
+          }
+          return res.status(400).json({ success: false, error: 'Login Failed' });
+        });
     })
     .catch(() => res.status(500).json({ success: false, error: 'Server error' }));
 };
