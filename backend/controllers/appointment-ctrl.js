@@ -90,7 +90,6 @@ const updateAppointment = (req, res) => {
         error: 'You must provide a body to update',
       });
     }
-
     return Appointment.findOne({ _id: req.params.id })
       .then((appointment) => {
         if (!appointment) {
@@ -98,15 +97,13 @@ const updateAppointment = (req, res) => {
             message: 'Appointment not found!',
           });
         }
-
         // Assign updated values to Appointment
         const updatedAppointment = {
           location: body.location,
           date: body.date,
-          visitors: body.vistors,
+          visitors: body.visitors,
         };
         Object.assign(appointment, updatedAppointment);
-
         return appointment
           .save()
           .then(() => res.status(200).json({
