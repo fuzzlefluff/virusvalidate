@@ -2,9 +2,13 @@
 // This is our core file,
 // where we define what routers are to be run on the server,
 // and to connect to our database object we defined
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
+// this is our config file where the port to listen on is defined.
+const config = require('./config.json');
 
 // import our routers and database connector
 const db = require('./db');
@@ -14,9 +18,9 @@ const visitorRouter = require('./routes/visitor-router');
 const accountRouter = require('./routes/account-router');
 const appointmentRouter = require('./routes/appointment-router');
 
-// define the express API server and what port it will listen to (3000)
+// define the express API server and what port it will listen to (3000 - from config file)
 const app = express();
-const apiPort = 3000;
+const apiPort = `${config.API_PORT}`;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
